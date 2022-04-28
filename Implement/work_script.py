@@ -65,17 +65,21 @@ def job():
             for i in y_predict_proba :
                 problist.append(round(i[sus_cluster],3))
             current_data['prob'] = problist
-            current_data = current_data[(current_data['cluster']==sus_cluster) & (current_data['prob']>=0.8)]
-
+            current_data = current_data[(current_data['cluster']==sus_cluster) & (current_data['prob']>=0.8) & (current_data['all_units']>=1)]
             post_data = current_data[['road_number','km','direction','inflow_units','outflow_unit','samecell_units','all_units','avg_speed','lat','lon','datetime']]
             post_data = post_data.values.tolist()
 
             url = 'https://tad-api-v1.herokuapp.com/api/accident/bulk'
-            result = requests.post(url, json=post_data)
 
             print(f'Prediction of road {road} : {direction} : DONE ...')
-            print(f'Posting to Backend {len(post_data)} items')
-            print(f'Status code : {result.status_code} , reason : {result.reason}')
+            if len(post_data) != 0 :
+                result = requests.post(url, json=post_data)
+                
+                print(f'Posting to Backend {len(post_data)} items')
+                print(f'Status code : {result.status_code} , reason : {result.reason}')
+            else :
+                print(f'Not Detect anomaly, skipping ....')
+
             print('------------------------------------')
 
             
