@@ -1,1 +1,3 @@
 /dataset
+*.joblib
+/new_model_image
